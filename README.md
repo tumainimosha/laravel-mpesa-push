@@ -55,7 +55,13 @@ public function testPush() {
     $amount = 250;
     $txnId = str_random('20');
     
-    $success = $push->transact($customerMsisdn, $amount, $txnId);
+    $responseCode = $push->postRequest($customerMsisdn, $amount, $txnId);
+    
+    // Check for response code
+    // Valid response codes
+    //  '0' - Success (note: response code is string '0' not numeric 0)
+    //  'Duplicate' - Duplicate transaction ID
+    //   Others - fail
     
 }
     
