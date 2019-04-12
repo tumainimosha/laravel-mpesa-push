@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Published by JAX-WS RI (http://jax-ws.java.net). RI's version is JAX-WS RI 2.2.10 svn-revision#919b322c92f13ad085a933e8dd6dd35d4947364b.--><xs:schema version="1.0" targetNamespace="http://www.4cgroup.co.za/soapauth" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="EventID" nillable="true" type="xs:string"/>
+  <xs:element name="Token" nillable="true" type="xs:string"/>
+  <xs:element name="eventid" nillable="true" type="xs:string"/>
+</xs:schema>

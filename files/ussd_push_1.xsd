@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--Published by JAX-WS RI (http://jax-ws.java.net). RI's version is JAX-WS RI 2.2.10 svn-revision#919b322c92f13ad085a933e8dd6dd35d4947364b.--><xs:schema version="1.0" targetNamespace="http://www.4cgroup.co.za/genericsoap" xmlns:tns="http://www.4cgroup.co.za/genericsoap" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="dataItem" type="tns:dataItem"/>
+  <xs:element name="eventInfo" type="tns:eventInfo"/>
+  <xs:element name="response" type="tns:response"/>
+  <xs:element name="soapResult" type="tns:soapResult"/>
+  <xs:complexType name="dataItem">
+    <xs:sequence>
+      <xs:element name="dataItem" type="tns:soapResult" nillable="true" minOccurs="0" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="soapResult">
+    <xs:sequence>
+      <xs:element name="name" type="xs:string" minOccurs="0"/>
+      <xs:element name="type" type="xs:string" minOccurs="0"/>
+      <xs:element name="value" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="response">
+    <xs:sequence>
+      <xs:element name="eventInfo" type="tns:eventInfo" minOccurs="0"/>
+      <xs:element name="request" type="tns:dataItem" minOccurs="0"/>
+      <xs:element name="response" type="tns:dataItem" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="eventInfo">
+    <xs:sequence>
+      <xs:element name="code" type="xs:string" minOccurs="0"/>
+      <xs:element name="description" type="xs:string" minOccurs="0"/>
+      <xs:element name="detail" type="xs:string" minOccurs="0"/>
+      <xs:element name="transactionID" type="xs:string" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

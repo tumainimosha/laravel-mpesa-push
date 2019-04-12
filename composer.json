@@ -1,0 +1,55 @@
+{
+    "name": "tumainimosha/laravel-mpesa-push",
+    "type": "library",
+    "description": "Laravel package for TZ Mpesa USSD Push integration",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Tumaini Mosha",
+            "email": "princeton.mosha@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^7.1.3",
+        "ext-soap": "*"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2.13",
+        "fzaninotto/faker": "^1.9@dev",
+        "illuminate/support": "^5.8@dev",
+        "mockery/mockery": "^1.2@dev",
+        "orchestra/database": "^3.8@dev",
+        "orchestra/testbench": "^3.8@dev",
+        "phpunit/phpunit": "^7.4@dev"
+    },
+    "config": {
+        "preferred-install": "dist",
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Tumainimosha\\MpesaPush\\MpesaPushServiceProvider"
+            ],
+            "aliases": {
+                "MpesaPushFacade": "Tumainimosha\\MpesaPush\\MpesaPushFacade"
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Tumainimosha\\MpesaPush\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tumainimosha\\MpesaPush\\Tests\\": "tests/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "scripts": {
+        "test": "vendor/bin/phpunit",
+        "test-coverage": "vendor/bin/phpunit --coverage-html coverage"
+    }
+}
