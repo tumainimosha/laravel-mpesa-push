@@ -51,7 +51,7 @@ public function testPush() {
     // Resolve service object
     $push = new MpesaPush();
     
-    $customerMsisdn = '255754343476';
+    $customerMsisdn = '<substitute valid mpesa-tz number>';
     $amount = 250;
     $txnId = str_random('20');
     
