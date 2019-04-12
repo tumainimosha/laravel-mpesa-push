@@ -1,4 +1,6 @@
-# laravel-mpesa-push
+# Mpesa (Tz) Push API - Laravel Package
+
+*** This is still a work in progress and some applications are still undergoing tests.
 
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 [![Travis](https://img.shields.io/travis/tumainimosha/laravel-mpesa-push.svg?style=flat-square)]()
@@ -47,7 +49,7 @@ use Tumainimosha\MpesaPush\MpesaPush;
 public function testPush() {
 
     // Resolve service object
-    $push = app(MpesaPush::class);
+    $push = new MpesaPush();
     
     $customerMsisdn = '255754343476';
     $amount = 250;
