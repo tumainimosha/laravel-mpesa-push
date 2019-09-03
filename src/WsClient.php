@@ -4,6 +4,42 @@ namespace Tumainimosha\MpesaPush;
 
 class WsClient extends \SoapClient
 {
+    public static function instance()
+    {
+        // WSDL
+        $wsdl = __DIR__ . '/../files/ussd_push.wsdl';
+
+        // URL
+        $url = config('mpesa-push.endpoint');
+
+        // Certificates
+        $caFile = config('mpesa-push.ca_file');
+        $certFile = config('mpesa-push.ssl_cert');
+        $sslKeyFile = config('mpesa-push.ssl_key');
+        $sslKeyPasswd = config('mpesa-push.ssl_cert_password');
+
+        $context = stream_context_create([
+            'ssl' => [
+                'cafile' => $caFile,
+                'local_cert' => $certFile,
+                'local_pk' => $sslKeyFile,
+                'passphrase' => $sslKeyPasswd,
+                //'ciphers'=>'AES256-SHA'
+            ], ]);
+
+        $client = new self($wsdl, [
+            'stream_context' => $context,
+            'location' => $url,
+            // other options
+            'exceptions' => true,
+            'trace' => 1,
+            'connection_timeout' => 10,
+            'cache_wsdl' => WSDL_CACHE_NONE,
+        ]);
+
+        return $client;
+    }
+
     public function __doRequest($request, $location, $action, $version, $one_way = 0)
     {
         logger('Begin SoapClient Request =======================================');

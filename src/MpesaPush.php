@@ -4,8 +4,8 @@ namespace Tumainimosha\MpesaPush;
 
 use Illuminate\Support\Arr;
 use Tumainimosha\MpesaPush\Exceptions\AuthException;
-use Tumainimosha\MpesaPush\Exceptions\BaseException;
 use Tumainimosha\MpesaPush\Exceptions\RemoteSystemError;
+use Tumainimosha\MpesaPush\Models\MpesaPushTransaction as Transaction;
 
 class MpesaPush
 {
@@ -35,11 +35,25 @@ class MpesaPush
         return $this->options;
     }
 
-    public function __construct()
+    /**
+     * MpesaPush constructor.
+     * @param array $options
+     */
+    public function __construct($options = [])
     {
         $this->wsClient = app(WsClient::class);
 
-        $this->options = config('mpesa-push.default') ?? [];
+        $defaultOptions = config('mpesa-push.default') ?? [];
+        $this->options = array_merge($defaultOptions, $options);
+    }
+
+    /**
+     * @param array $options
+     * @return MpesaPush
+     */
+    public static function instance($options = [])
+    {
+        return new self($options);
     }
 
     /**
@@ -97,6 +111,10 @@ class MpesaPush
         $eventInfo = $response->eventInfo;
 
         if ((int) $eventInfo->code === 3) {
+
+            // Save txn
+            $this->saveTransactionToDb($customerMsisdn, $amount, $thirdPartyReference);
+
             $dataItems = $response->response->dataItem;
 
             foreach ($dataItems as $dataItem) {
@@ -125,11 +143,10 @@ class MpesaPush
      */
     protected function buildTransactionRequestXml($customerMsisdn, $amount, $thirdPartyReference): string
     {
-        // Get Set optons
+        // Get Set options
         $options = $this->getOptions();
 
         $username = Arr::get($options, 'username');
-        $password = Arr::get($options, 'password');
 
         $businessName = Arr::get($options, 'businessName');
         $businessNumber = Arr::get($options, 'businessNumber');
@@ -210,7 +227,7 @@ XML;
      */
     protected function buildLoginRequestXml(): string
     {
-        // Get Set optons
+        // Get Set options
         $options = $this->getOptions();
 
         $username = Arr::get($options, 'username');
@@ -232,5 +249,17 @@ XML;
 XML;
 
         return $xml;
+    }
+
+    protected function saveTransactionToDb(string $customerMsisdn, float $amount, string $thirdPartyReference)
+    {
+        $txn = Transaction::query()
+            ->create([
+                'customer_msisdn' => $customerMsisdn,
+                'amount' => $amount,
+                'reference' => $thirdPartyReference,
+                'business_number' => $this->options['businessNumber'],
+                //'mpesa_transaction_id',
+            ]);
     }
 }

@@ -39,9 +39,34 @@ return [
      */
     'cache_wsdl' => env('TZ_MPESA_PUSH_CACHE_WSDL', true),
 
+    /**
+     * Route path to receive tigopesa push callback.
+     */
+    'callback_path' => env('TZ_MPESA_PUSH_CALLBACK_PATH', '/api/voda/callback'),
 
     /**
-     * Default channel options
+     * Middleware applied to callback path.
+     */
+    'callback_middleware' => [
+        'api',
+        \Tumainimosha\MpesaPush\Http\Middleware\IpAddressFilter::class,
+    ],
+
+    /**
+     * List of IPs whitelisted to send callback
+     *  valid values are either
+     *      (i) a single IP address eg: 192.168.168.5, OR
+     *      (ii) a subnet block eg: 192.168.168.0/24.
+     */
+    'whitelist_ips' => [
+        //'127.0.0.1', # localhost. Uncomment for dev testing
+        '41.217.203.61', # Host 1
+        '41.217.203.241', # Host 2
+    ],
+
+
+    /**
+     * Default channel options.
      */
     'default' => [
         'username' => env('TZ_MPESA_PUSH_USERNAME'),
@@ -51,7 +76,7 @@ return [
         'businessNumber' => env('TZ_MPESA_PUSH_BUSINESS_NUMBER'),
 
         'currency' => 'TSH',
-        'command' => 'customerPayBill',
+        'command' => 'customerPayBill', // valid options: customerPayBill, customerLipa
         'callbackChannel' => '1',
         'callbackUrl' => env('TZ_MPESA_PUSH_CALLBACK_URL'),
     ],
