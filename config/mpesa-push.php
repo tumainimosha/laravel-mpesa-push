@@ -5,7 +5,7 @@ return [
     /**
      * Request URL.
      */
-    'endpoint' => 'https://broker2.ipg.tz.vodafone.com:30010/iPG/b2c/ussd_push',
+    'endpoint' => env('TZ_MPESA_PUSH_ENDPOINT', 'https://broker2.ipg.tz.vodafone.com:30010/iPG/b2c/ussd_push'),
 
     /**
      * Path to Vodacom Certificate Authority (CA) Root certificate.

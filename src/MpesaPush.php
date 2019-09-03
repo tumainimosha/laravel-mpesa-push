@@ -30,7 +30,7 @@ class MpesaPush
         return $this;
     }
 
-    protected function getOptions() :array
+    protected function getOptions(): array
     {
         return $this->options;
     }
@@ -54,6 +54,55 @@ class MpesaPush
     public static function instance($options = [])
     {
         return new self($options);
+    }
+
+    public function setUsername(string $username)
+    {
+        $this->options['username'] = $username;
+
+        return $this;
+    }
+
+    public function setPassword(string $password)
+    {
+        $this->options['password'] = $password;
+
+        return $this;
+    }
+
+    public function setBusinessName(string $businessName)
+    {
+        $this->options['businessName'] = $businessName;
+
+        return $this;
+    }
+
+    public function setBusinessNumber(string $businessNumber)
+    {
+        $this->options['businessNumber'] = $businessNumber;
+
+        return $this;
+    }
+
+    public function setCommand(string $command)
+    {
+        $this->options['command'] = $command;
+
+        return $this;
+    }
+
+    public function setCallbackChannel(string $callbackChannel)
+    {
+        $this->options['callbackChannel'] = $callbackChannel;
+
+        return $this;
+    }
+
+    public function setCallbackUrl(string $callbackUrl)
+    {
+        $this->options['callbackUrl'] = $callbackUrl;
+
+        return $this;
     }
 
     /**

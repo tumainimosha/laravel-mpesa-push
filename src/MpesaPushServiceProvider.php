@@ -23,7 +23,7 @@ class MpesaPushServiceProvider extends ServiceProvider
 
         $this->publishes([
             self::MIGRATION_PATH => database_path('migrations'),
-        ], 'config');
+        ], 'migrations');
 
         /*
          * Optional methods to load your package assets
