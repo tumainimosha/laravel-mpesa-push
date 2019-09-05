@@ -20,7 +20,7 @@ class CreateMpesaPushTransactionsTable extends Migration
             $table->double('amount');
             $table->string('business_number')->nullable();
             $table->timestamp('callback_received_at')->nullable();
-            $table->boolean('callback_status')->nullable();
+            $table->string('callback_status')->nullable();
             $table->string('callback_description')->nullable();
             $table->string('mpesa_transaction_id')->nullable();
             $table->timestamps();
