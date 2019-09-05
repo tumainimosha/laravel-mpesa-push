@@ -18,7 +18,7 @@ class IpAddressFilter
     public function __construct()
     {
         // Get whitelisted ips from config
-        $this->whitelist_ips = config('tigopesa-push.whitelist_ips', []);
+        $this->whitelist_ips = config('mpesa-push.whitelist_ips', []);
     }
 
     /**
