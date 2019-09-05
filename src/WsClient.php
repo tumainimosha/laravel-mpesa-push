@@ -9,33 +9,35 @@ class WsClient extends \SoapClient
         // WSDL
         $wsdl = __DIR__ . '/../files/ussd_push.wsdl';
 
-        // URL
-        $url = config('mpesa-push.endpoint');
-
         // Certificates
-        $caFile = config('mpesa-push.ca_file');
-        $certFile = config('mpesa-push.ssl_cert');
-        $sslKeyFile = config('mpesa-push.ssl_key');
-        $sslKeyPasswd = config('mpesa-push.ssl_cert_password');
+        $sslConfig = [];
+        $sslConfig['cafile'] = config('mpesa-push.ca_file');
+        $sslConfig['local_cert'] = config('mpesa-push.ssl_cert');
+        $sslConfig['local_pk'] = config('mpesa-push.ssl_key');
+
+        $sslPassphrase = config('mpesa-push.ssl_cert_password');
+        if(!empty($sslPassphrase)) {
+            $sslConfig['passphrase'] = config('mpesa-push.ssl_cert_password');
+        }
 
         $context = stream_context_create([
-            'ssl' => [
-                'cafile' => $caFile,
-                'local_cert' => $certFile,
-                'local_pk' => $sslKeyFile,
-                'passphrase' => $sslKeyPasswd,
-                //'ciphers'=>'AES256-SHA'
-            ], ]);
+            'ssl' => $sslConfig,
+        ]);
 
-        $client = new self($wsdl, [
+        // URL
+        $endpoint = config('mpesa-push.endpoint');
+
+        $soapConfig = [
             'stream_context' => $context,
-            'location' => $url,
+            'location' => $endpoint,
             // other options
             'exceptions' => true,
             'trace' => 1,
             'connection_timeout' => 10,
-            'cache_wsdl' => WSDL_CACHE_NONE,
-        ]);
+            //'cache_wsdl' => WSDL_CACHE_NONE,
+        ];
+
+        $client = new self($wsdl, $soapConfig);
 
         return $client;
     }

@@ -8,7 +8,7 @@ class MpesaPushServiceProvider extends ServiceProvider
 {
     const CONFIG_PATH = __DIR__ . '/../config/mpesa-push.php';
 
-    const MIGRATION_PATH = __DIR__ . '/../database/migrations';
+    const MIGRATION_PATH = __DIR__ . '/database/migrations';
 
     /**
      * Bootstrap any application services.
