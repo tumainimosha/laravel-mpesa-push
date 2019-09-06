@@ -8,6 +8,8 @@ class MpesaPushServiceProvider extends ServiceProvider
 {
     const CONFIG_PATH = __DIR__ . '/../config/mpesa-push.php';
 
+    const MIGRATION_PATH = __DIR__ . '/database/migrations';
+
     /**
      * Bootstrap any application services.
      *
@@ -18,12 +20,17 @@ class MpesaPushServiceProvider extends ServiceProvider
         $this->publishes([
             self::CONFIG_PATH => config_path('mpesa-push.php'),
         ], 'config');
+
+        $this->publishes([
+            self::MIGRATION_PATH => database_path('migrations'),
+        ], 'migrations');
+
         /*
          * Optional methods to load your package assets
          */
         // $this->loadViewsFrom(__DIR__.'/../resources/views', 'LaravelMpesaPush');
-        // $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
-        // $this->loadRoutesFrom(__DIR__.'/routes.php');
+        $this->loadMigrationsFrom(self::MIGRATION_PATH);
+        $this->loadRoutesFrom(__DIR__ . '/routes.php');
     }
 
     /**
@@ -38,39 +45,8 @@ class MpesaPushServiceProvider extends ServiceProvider
             'mpesa-push'
         );
 
-        // WSDL
-        $wsdl = __DIR__ . '/../files/ussd_push.wsdl';
-
-        // URL
-        $url = config('mpesa-push.endpoint');
-
-        // Certificates
-        $caFile = config('mpesa-push.ca_file');
-        $certFile = config('mpesa-push.ssl_cert');
-        $sslKeyFile = config('mpesa-push.ssl_key');
-        $sslKeyPasswd = config('mpesa-push.ssl_cert_password');
-
-        $context = stream_context_create([
-            'ssl' => [
-                'cafile' => $caFile,
-                'local_cert' => $certFile,
-                'local_pk' => $sslKeyFile,
-                'passphrase' => $sslKeyPasswd,
-                //'ciphers'=>'AES256-SHA'
-            ], ]);
-
-        $client = new \Tumainimosha\MpesaPush\WsClient($wsdl, [
-            'stream_context' => $context,
-            'location' => $url,
-            // other options
-            'exceptions' => true,
-            'trace' => 1,
-            'connection_timeout' => 10,
-            'cache_wsdl' => WSDL_CACHE_NONE,
-        ]);
-
-        $this->app->singleton(WsClient::class, function ($app) use ($client) {
-            return $client;
+        $this->app->singleton(WsClient::class, function ($app) {
+            return WsClient::instance();
         });
     }
 }
