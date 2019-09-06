@@ -102,6 +102,7 @@ public function handle(MpesaCallbackReceived $event)
     
     // do your custom logic here
 }
+```
 
 ### Customize config values at runtime
 
