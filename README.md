@@ -1,7 +1,5 @@
 # Mpesa (Tz) Push API - Laravel Package
 
-*** This is still a work in progress and some applications are still undergoing tests.
-
 [![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](LICENSE.md)
 [![Travis](https://img.shields.io/travis/tumainimosha/laravel-mpesa-push.svg?style=flat-square)]()
 [![Total Downloads](https://img.shields.io/packagist/dt/tumainimosha/laravel-mpesa-push.svg?style=flat-square)](https://packagist.org/packages/tumainimosha/laravel-mpesa-push)
@@ -138,6 +136,10 @@ Please see [CONTRIBUTING](CONTRIBUTING.md) for details.
 - [X] Login
 - [X] Push Transaction request
 - [X] Callback processing
+- [ ] More documentation and examples
+- [ ] Unit testing
+
+** Help needed with improving documentation and unit testing. Pull Requests are welcome.
 
 ## Security
 If you discover any security-related issues, please email princeton.mosha@gmail.com instead of using the issue tracker.
