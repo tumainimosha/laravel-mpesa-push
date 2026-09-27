@@ -148,9 +148,9 @@ class MpesaPush
      * @throws AuthException
      * @throws RemoteSystemError
      */
-    public function postRequest(string $customerMsisdn, float $amount, string $thirdPartyReference)
+    public function postRequest(string $customerMsisdn, float $amount, string $thirdPartyReference, string $beneficiaryMsisdn = null)
     {
-        $xml = $this->buildTransactionRequestXml($customerMsisdn, $amount, $thirdPartyReference);
+        $xml = $this->buildTransactionRequestXml($customerMsisdn, $amount, $thirdPartyReference, $beneficiaryMsisdn);
 
         // Get Auth token
         $token = $this->login();
@@ -188,14 +188,17 @@ class MpesaPush
      * @param $customerMsisdn
      * @param $amount
      * @param $thirdPartyReference
+     * @param string|null $beneficiaryMsisdn Defaults to the business number (spId per Appendix 1) — the
+     *     beneficiary of a paybill push is our business account, not the paying customer.
      * @return string
      */
-    protected function buildTransactionRequestXml($customerMsisdn, $amount, $thirdPartyReference): string
+    protected function buildTransactionRequestXml($customerMsisdn, $amount, $thirdPartyReference, string $beneficiaryMsisdn = null): string
     {
         // Get Set options
         $options = $this->getOptions();
 
         $username = Arr::get($options, 'username');
+        $password = Arr::get($options, 'password');
 
         $businessName = Arr::get($options, 'businessName');
         $businessNumber = Arr::get($options, 'businessNumber');
@@ -205,8 +208,12 @@ class MpesaPush
         $callbackChannel = Arr::get($options, 'callbackChannel');
         $callbackUrl = Arr::get($options, 'callbackUrl');
 
-        // Add Txn date
-        $txnDate = now()->format('YmdH');
+        $beneficiaryMsisdn = $beneficiaryMsisdn ?? $businessNumber;
+
+        // IPG v2.5 requires the full YYYYMMDDHH24MMSS timestamp, and it must be the
+        // exact value used to compute the hashed Password below (Appendix 1).
+        $txnDate = now()->format('YmdHis');
+        $hashedPassword = self::hashPassword($businessNumber, $password, $txnDate);
 
         $xml = <<<XML
                 <Request>
@@ -214,6 +221,11 @@ class MpesaPush
                         <name>CustomerMSISDN</name>
                         <type>String</type>
                         <value>$customerMsisdn</value>
+                    </dataItem>
+                    <dataItem>
+                        <name>Password</name>
+                        <type>String</type>
+                        <value>$hashedPassword</value>
                     </dataItem>
                     <dataItem>
                         <name>BusinessName</name>
@@ -265,10 +277,23 @@ class MpesaPush
                         <type>String</type>
                         <value>$username</value>
                     </dataItem>
+                    <dataItem>
+                        <name>BeneficiaryMSISDN</name>
+                        <type>String</type>
+                        <value>$beneficiaryMsisdn</value>
+                    </dataItem>
                 </Request>
 XML;
 
         return $xml;
+    }
+
+    /**
+     * $timestamp must match the Date field sent in the same request and is valid for 10 minutes.
+     */
+    public static function hashPassword(string $businessNumber, string $password, string $timestamp): string
+    {
+        return base64_encode(strtoupper(hash('sha256', $businessNumber . $password . $timestamp)));
     }
 
     /**
