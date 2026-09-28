@@ -45,6 +45,13 @@ return [
     'callback_path' => env('TZ_MPESA_PUSH_CALLBACK_PATH', '/api/voda/callback'),
 
     /**
+     * eventId sent with the push (C2B) transaction request. Vodacom has changed
+     * this value across IPG revisions without notice, so it's configurable
+     * rather than hardcoded.
+     */
+    'push_event_id' => env('TZ_MPESA_PUSH_EVENT_ID', '10326'),
+
+    /**
      * Middleware applied to callback path.
      */
     'callback_middleware' => [

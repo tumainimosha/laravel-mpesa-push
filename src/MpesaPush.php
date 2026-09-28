@@ -155,7 +155,7 @@ class MpesaPush
         // Get Auth token
         $token = $this->login();
 
-        $response = $this->wsClient->execRequest('40009', $xml, $token);
+        $response = $this->wsClient->execRequest(config('mpesa-push.push_event_id', '10326'), $xml, $token);
 
         $eventInfo = $response->eventInfo;
 
