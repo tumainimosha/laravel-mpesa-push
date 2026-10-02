@@ -82,7 +82,7 @@ return [
         'businessName' => env('TZ_MPESA_PUSH_BUSINESS_NAME'),
         'businessNumber' => env('TZ_MPESA_PUSH_BUSINESS_NUMBER'),
 
-        'currency' => 'TSH',
+        'currency' => 'TZS', // ISO 4217; the IPG rejects the older 'TSH'
         'command' => 'customerPayBill', // valid options: customerPayBill, customerLipa
         'callbackChannel' => '1',
         'callbackUrl' => env('TZ_MPESA_PUSH_CALLBACK_URL'),
