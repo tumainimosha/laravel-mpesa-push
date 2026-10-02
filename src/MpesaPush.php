@@ -128,16 +128,55 @@ class MpesaPush
             throw new RemoteSystemError($errorMsg);
         }
 
-        $dataItem = $response->response->dataItem;
+        try {
+            return self::sessionIdFrom($response);
+        } catch (AuthException $e) {
+            logger($e->getMessage());
 
-        if ((string) $dataItem->value === 'Invalid Credentials') {
-            $errorMsg = 'Login failed! Invalid Credentials for Mpesa Push.';
-            logger($errorMsg);
+            throw $e;
+        }
+    }
 
-            throw new AuthException($errorMsg);
+    /**
+     * Pull the session token out of a login (event 2500) response.
+     *
+     * The IPG can answer a login with code 3 ("Processed") and a SessionId item
+     * that carries no <value> at all, in which case PHP's SoapClient leaves the
+     * property off the object. Treat that as a failed login rather than reading
+     * a property that is not there and sending an empty token on.
+     *
+     * @param \stdClass $response
+     * @throws AuthException
+     */
+    public static function sessionIdFrom($response): string
+    {
+        $items = $response->response->dataItem ?? [];
+
+        // SoapClient returns a single <dataItem> as an object, several as an array.
+        if (! is_array($items)) {
+            $items = [$items];
         }
 
-        return (string) $dataItem->value;
+        $item = null;
+        foreach ($items as $candidate) {
+            if (isset($candidate->name) && (string) $candidate->name === 'SessionId') {
+                $item = $candidate;
+                break;
+            }
+        }
+        $item = $item ?? ($items[0] ?? null);
+
+        $value = isset($item->value) ? trim((string) $item->value) : '';
+
+        if ($value === 'Invalid Credentials') {
+            throw new AuthException('Login failed! Invalid Credentials for Mpesa Push.');
+        }
+
+        if ($value === '') {
+            throw new AuthException('Login failed! Mpesa Push returned no SessionId. Check the username, password and endpoint are active for this account.');
+        }
+
+        return $value;
     }
 
     /**
