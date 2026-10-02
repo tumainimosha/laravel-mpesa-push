@@ -230,8 +230,7 @@ class MpesaPush
      * @param $customerMsisdn
      * @param $amount
      * @param $thirdPartyReference
-     * @param string|null $beneficiaryMsisdn Defaults to the customer MSISDN, which is what the IPG
-     *     expects for a customerPayBill push (a business number here fails at the PIN step).
+     * @param string|null $beneficiaryMsisdn Defaults to the customer MSISDN if none provided
      * @return string
      */
     protected function buildTransactionRequestXml($customerMsisdn, $amount, $thirdPartyReference, string $beneficiaryMsisdn = null): string
