@@ -189,6 +189,9 @@ class MpesaPush
      */
     public function postRequest(string $customerMsisdn, float $amount, string $thirdPartyReference, string $beneficiaryMsisdn = null)
     {
+        $customerMsisdn = self::normalizeMsisdn($customerMsisdn);
+        $beneficiaryMsisdn = $beneficiaryMsisdn === null ? null : self::normalizeMsisdn($beneficiaryMsisdn);
+
         $xml = $this->buildTransactionRequestXml($customerMsisdn, $amount, $thirdPartyReference, $beneficiaryMsisdn);
 
         // Get Auth token
@@ -227,8 +230,7 @@ class MpesaPush
      * @param $customerMsisdn
      * @param $amount
      * @param $thirdPartyReference
-     * @param string|null $beneficiaryMsisdn Defaults to the business number (spId per Appendix 1) — the
-     *     beneficiary of a paybill push is our business account, not the paying customer.
+     * @param string|null $beneficiaryMsisdn Defaults to the customer MSISDN if none provided
      * @return string
      */
     protected function buildTransactionRequestXml($customerMsisdn, $amount, $thirdPartyReference, string $beneficiaryMsisdn = null): string
@@ -247,7 +249,7 @@ class MpesaPush
         $callbackChannel = Arr::get($options, 'callbackChannel');
         $callbackUrl = Arr::get($options, 'callbackUrl');
 
-        $beneficiaryMsisdn = $beneficiaryMsisdn ?? $businessNumber;
+        $beneficiaryMsisdn = $beneficiaryMsisdn ?? $customerMsisdn;
 
         // IPG v2.5 requires the full YYYYMMDDHH24MMSS timestamp, and it must be the
         // exact value used to compute the hashed Password below (Appendix 1).
@@ -325,6 +327,27 @@ class MpesaPush
 XML;
 
         return $xml;
+    }
+
+    /**
+     * Format an MSISDN the way the IPG expects it: digits only, with the 255 country code.
+     *
+     * Accepts +255…, 255…, 0… and bare 9-digit local numbers. A leading '+' made the
+     * push reach the customer but fail at the PIN step.
+     */
+    public static function normalizeMsisdn(string $msisdn): string
+    {
+        $digits = preg_replace('/\D/', '', $msisdn);
+
+        if (strlen($digits) === 10 && $digits[0] === '0') {
+            return '255' . substr($digits, 1);
+        }
+
+        if (strlen($digits) === 9) {
+            return '255' . $digits;
+        }
+
+        return $digits;
     }
 
     /**

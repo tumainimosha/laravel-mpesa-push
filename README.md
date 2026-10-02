@@ -62,6 +62,9 @@ public function testPush() {
     
     $responseCode = $push->postRequest($customerMsisdn, $amount, $txnId);
     
+    // MSISDNs may be given as +255…, 255…, 0… or 9 digits; they are sent as 255….
+    // BeneficiaryMSISDN defaults to the customer; pass a 4th argument to override it.
+    
     // Check for response code
     // Valid response codes
     //  '0' - Success (note: response code is string '0' not numeric 0)
