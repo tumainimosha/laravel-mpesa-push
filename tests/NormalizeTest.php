@@ -25,24 +25,4 @@ class NormalizeTest extends TestCase
             'spaces and dashes' => ['+255 754-000-000', '255754000000'],
         ];
     }
-
-    /**
-     * @dataProvider currencies
-     */
-    public function test_normalizes_currency(?string $input, string $expected): void
-    {
-        $this->assertSame($expected, MpesaPush::normalizeCurrency($input));
-    }
-
-    public static function currencies(): array
-    {
-        return [
-            'legacy TSH' => ['TSH', 'TZS'],
-            'lowercase legacy' => ['tsh', 'TZS'],
-            'already TZS' => ['TZS', 'TZS'],
-            'missing' => [null, 'TZS'],
-            'empty' => ['', 'TZS'],
-            'other code kept' => ['USD', 'USD'],
-        ];
-    }
 }

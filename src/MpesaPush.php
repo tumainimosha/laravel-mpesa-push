@@ -245,7 +245,7 @@ class MpesaPush
         $businessName = Arr::get($options, 'businessName');
         $businessNumber = Arr::get($options, 'businessNumber');
 
-        $currency = self::normalizeCurrency(Arr::get($options, 'currency'));
+        $currency = Arr::get($options, 'currency');
         $command = Arr::get($options, 'command');
         $callbackChannel = Arr::get($options, 'callbackChannel');
         $callbackUrl = Arr::get($options, 'callbackUrl');
@@ -349,16 +349,6 @@ XML;
         }
 
         return $digits;
-    }
-
-    /**
-     * Configs published before 0.4.3 carry 'TSH', which the IPG does not accept.
-     */
-    public static function normalizeCurrency($currency): string
-    {
-        $currency = strtoupper(trim((string) $currency));
-
-        return ($currency === '' || $currency === 'TSH') ? 'TZS' : $currency;
     }
 
     /**

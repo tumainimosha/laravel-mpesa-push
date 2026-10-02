@@ -64,7 +64,6 @@ public function testPush() {
     
     // MSISDNs may be given as +255…, 255…, 0… or 9 digits; they are sent as 255….
     // BeneficiaryMSISDN defaults to the customer; pass a 4th argument to override it.
-    // Currency defaults to TZS (a legacy 'TSH' in a published config is sent as TZS).
     
     // Check for response code
     // Valid response codes
