@@ -42,11 +42,28 @@ class WsClient extends \SoapClient
         return $client;
     }
 
+    /**
+     * Mask the values of credential-bearing fields before an exchange is logged.
+     *
+     * Covers the Username, Password and SessionId data items (the IPG echoes the
+     * login request back in its response) and the SOAP Token header.
+     */
+    public static function redact(string $xml): string
+    {
+        $xml = preg_replace(
+            '~(<name>\s*(?:Username|Password|SessionId)\s*</name>\s*(?:<type>[^<]*</type>\s*)?<value>)[^<]*(</value>)~i',
+            '$1***$2',
+            $xml
+        );
+
+        return preg_replace('~(<(?:[\w-]+:)?Token>)[^<]+(</(?:[\w-]+:)?Token>)~i', '$1***$2', $xml);
+    }
+
     public function __doRequest($request, $location, $action, $version, $one_way = 0)
     {
         logger('Begin SoapClient Request =======================================');
 
-        logger("REQUEST:\n" . $request . "\n");
+        logger("REQUEST:\n" . self::redact((string) $request) . "\n");
         logger("LOCATION:\n" . $location . "\n");
         logger("ACTION:\n" . $action . "\n");
         logger("VERSION:\n" . $version . "\n");
@@ -54,7 +71,7 @@ class WsClient extends \SoapClient
 
         $response = parent::__doRequest($request, $location, $action, $version, $one_way);
 
-        logger("RESPONSE:\n" . $response . "\n");
+        logger("RESPONSE:\n" . self::redact((string) $response) . "\n");
 
         logger('End SoapClient Request =======================================');
 
